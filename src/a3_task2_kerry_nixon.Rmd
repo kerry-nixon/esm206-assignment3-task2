@@ -57,7 +57,12 @@ Make sure to `View()` the resulting data frame (remember: run `View()` in the Co
 
 ```{r}
 # Your code here: 
+sw_split_name <- starwars %>%  # start with starwars
+  separate(col = name, # separate the name column...
+           into = c("name_1", "name_2"), # into columns: "name_1", "name_2"
+           sep = "-") # separated by the first "-" dash
 
+# I did NOT get a warning about a piece fo data getting dropped. However, I reviewed line 49 before and after the name separation, and the name with two dashes lost the string of text after the second dash. This would be problematic for data analysis moving forward from this step. Perhaps data should have been reviewed prior to the separation and a third column, or a different argument, should have been added to account for data containing more than one dash.  
 
 ```
 
@@ -91,7 +96,12 @@ Make sure to `View()` the resulting data frame (remember: run `View()` in the Co
 
 ```{r}
 # Your code here:
-
+sw_skin_sep <- starwars %>%  # start with starwars
+  separate(col = skin_color, # separate column "skin_color"...
+           into = c("skin_1", "skin_2"), # into two columns
+           sep = ",", # separated at the first "," comma
+           extra = "merge", # merge anything after the first comma into the second column
+           remove = FALSE) # do *not* remove the original column
 
 ```
 
@@ -113,7 +123,7 @@ Check the output after running the code.
 mpg_make_model <- mpg %>% # Start with mpg
   unite(col = make_model, # Create a new column called 'make_model'
         c(manufacturer, model), # That combines the manufacturer & model column
-        sep = "HEY!" # Puts "HEY!" between the pieces (default is underscore)
+        sep = "--" # Puts "HEY!" between the pieces (default is underscore)
         ) 
 
 # Feel free to try different separators in the `sep = ""` argument above.
@@ -127,7 +137,11 @@ In the code chunk below, starting from the `mpg` data create a new data frame ca
 
 ```{r}
 # Your code here: 
-
+mpg_model_class <- mpg %>%  # start with mpg
+  unite(col = model_class, # create new column...
+        c(model, class), # by combining "model" and "class" columns
+        sep = "-", # separated by a "-" dash
+        remove = FALSE) # keeping the original columns
 
 ```
 
@@ -157,7 +171,11 @@ In the code chunk below, use `ymd()` to convert a date that you choose in `YYYY-
 
 ```{r}
 # Your code here: 
+ymd("1989-06-05")
 
+ymd("1989/06/05")
+
+ymd(19890605)
 
 ```
 
@@ -182,7 +200,9 @@ In the code chunk below, create a vector (using `c()`, as above) stored as `some
 
 ```{r}
 # Your code here: 
-
+some_dates <- c(11061972, 02142007,01301843) # creating vector of dates
+some_dates_converted <- mdy(some_dates) # converting to YMD date format
+class(some_dates_converted) # checking the class
 
 ```
 
@@ -226,7 +246,15 @@ Starting from the `lakers` dataset, create a new dataset called `gasol_hookshots
 
 ```{r}
 # Your code here: 
-
+gasol_hookshots <- lakers %>%  # Create a new object starting with lakers
+  filter(player == "Pau Gasol", # filter to only include Pau Gasol and...
+         type == "hook") %>% # hook shots made
+  mutate(date_new = ymd(date)) %>% # add new ymd formatted date column
+  mutate(month_new = month(date_new))  # add new month-only column
+  
+ gasol_hookshots %>% 
+   count(month_new) # count hook shots by month
+  
 
 ```
 
@@ -276,7 +304,10 @@ Note: If you add another condition within `case_when()` that is `TRUE ~ "some th
 
 ```{r}
 # Your code here: 
-
+storms_danger <- storms %>% # create new object from storms data set
+  mutate(danger = case_when( # make new column for danger level
+    status == "hurricane" ~ "high", # if "hurricane" then "high"
+    status != "hurricane" ~ "moderate")) # use argument "!=", if status does *not* match "hurricane" then the new column should contain "moderate"
 
 ```
 
